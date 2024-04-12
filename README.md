@@ -87,3 +87,67 @@ O `TransacaoService` é responsável pela lógica de negócios relacionada às t
 - `transferencia`: Este método é responsável por realizar uma transferência entre dois usuários. Ele recebe um `TransacaoDTO`, valida os dados da transação, realiza a transferência no banco de dados e retorna a transação realizada.
 - `deposito`: Este método é responsável por realizar um depósito para um usuário. Ele recebe um `TransacaoDTO`, valida os dados da transação, realiza o depósito no banco de dados e retorna a transação realizada.
 
+## Padrão das Resquisições 
+Claro, aqui estão os modelos de requisição com os métodos HTTP correspondentes para cada ação do controlador:
+
+Para o `TransacaoController`:
+
+1. Método de requisição para `transferenciaAction`:
+
+```http
+POST /transferencia
+Content-Type: application/json
+
+{
+    "cpfCnpjRemetente": "string",
+    "cpfCnpjDestinatario": "string",
+    "valor": "float"
+}
+```
+
+2. Método de requisição para `depositoAction`:
+
+```http
+POST /deposito
+Content-Type: application/json
+
+{
+    "cpfCnpjRemetente": "string",
+    "valor": "float"
+}
+```
+
+Para o `UsuarioController`:
+
+1. Método de requisição para `criarUsuarioAction`:
+
+```http
+POST /criar-usuario
+Content-Type: application/json
+
+{
+    "nome": "string",
+    "cpfCnpj": "string",
+    "email": "string",
+    "senha": "string",
+    "isLogista": "boolean"
+}
+```
+
+2. Método de requisição para `atualizarUsuarioAction`:
+
+```http
+PUT /atualizar-usuario/{id}
+Content-Type: application/json
+
+{
+    "nome": "string",
+    "cpfCnpj": "string",
+    "email": "string",
+    "senha": "string",
+    "isLogista": "boolean"
+}
+```
+
+Por favor, substitua "string", "float", "boolean" e "{id}" pelos valores reais que você deseja enviar na solicitação.
+
