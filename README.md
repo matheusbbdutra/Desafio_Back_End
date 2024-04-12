@@ -88,7 +88,7 @@ O `TransacaoService` é responsável pela lógica de negócios relacionada às t
 - `deposito`: Este método é responsável por realizar um depósito para um usuário. Ele recebe um `TransacaoDTO`, valida os dados da transação, realiza o depósito no banco de dados e retorna a transação realizada.
 
 ## Padrão das Resquisições 
-Claro, aqui estão os modelos de requisição com os métodos HTTP correspondentes para cada ação do controlador:
+Modelos de requisição com os métodos HTTP correspondentes para cada ação do controlador:
 
 Para o `TransacaoController`:
 
