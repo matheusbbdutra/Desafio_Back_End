@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Usuario\Entity\Usuario" table="s_usuario" repository-class="App\Domain\Usuario\Repository\UsuarioRepository">
+        <id name="id" column="id" type="integer">
+            <generator strategy="IDENTITY"/>
+        </id>
+        <field name="nome" column="nome" type="string"/>
+        <field name="cpfCnpj" column="cpf_cnpj" type="documento" unique="true"/>
+        <field name="email" column="email" type="email" unique="true"/>
+        <field name="senha" column="senha" type="string"/>
+        <one-to-many field="transacoesEnviadas" target-entity="App\Domain\Transacao\Entity\Transacao" mapped-by="remetente"/>
+        <one-to-many field="transacoesRecebidas" target-entity="App\Domain\Transacao\Entity\Transacao" mapped-by="destinatario"/>
+        <one-to-one field="carteira" target-entity="App\Domain\Transacao\Entity\Carteira" mapped-by="usuario"/>
+        <field name="isLogista" column="is_logista" type="boolean"/>
+    </entity>
+</doctrine-mapping>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Domain\Transacao\Entity\Transacao" table="transacoes" repository-class="App\Domain\Transacao\Repository\TransacaoRepository">
+        <id name="id" column="id" type="integer">
+            <generator strategy="IDENTITY"/>
+        </id>
+        <field name="valor" column="valor" type="float"/>
+        <field name="dtTransacao" column="dt_transacao" type="datetime"/>
+        <many-to-one field="remetente" target-entity="App\Domain\Usuario\Entity\Usuario" inversed-by="transacoesEnviadas">
+            <join-column name="remetente_id" referenced-column-name="id"/>
+        </many-to-one>
+
+        <many-to-one field="destinatario" target-entity="App\Domain\Usuario\Entity\Usuario" inversed-by="transacoesRecebidas">
+            <join-column name="destinatario_id" referenced-column-name="id"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>
