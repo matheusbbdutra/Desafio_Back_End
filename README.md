@@ -1,7 +1,7 @@
 
 # Projeto PHP
 
-Este projeto utiliza PHP e o gerenciador de dependências Composer.
+Este projeto utiliza PHP, Symfony, Doctrine e o gerenciador de dependências Composer, tudo rodando em cima do Docker com Nginx e PostgreSQL.
 
 # Estrutura do Projeto
 
