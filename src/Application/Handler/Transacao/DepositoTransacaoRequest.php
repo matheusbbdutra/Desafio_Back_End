@@ -6,11 +6,8 @@ use App\Application\DTO\Trasacao\TransacaoDTO;
 
 class DepositoTransacaoRequest
 {
-    private TransacaoDTO $dadosTransacao;
-
-    public function __construct(TransacaoDTO $dadosTransacao)
+    public function __construct(private TransacaoDTO $dadosTransacao)
     {
-        $this->dadosTransacao = $dadosTransacao;
     }
 
     public function getDadosTransacao(): TransacaoDTO

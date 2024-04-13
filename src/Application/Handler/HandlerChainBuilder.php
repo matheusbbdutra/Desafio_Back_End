@@ -4,11 +4,8 @@ namespace App\Application\Handler;
 
 class HandlerChainBuilder
 {
-    private $handlers;
-
-    public function __construct(iterable $handlers)
+    public function __construct(private iterable $handlers)
     {
-        $this->handlers = $handlers;
     }
 
     public function buildChain(): AbstractHandler

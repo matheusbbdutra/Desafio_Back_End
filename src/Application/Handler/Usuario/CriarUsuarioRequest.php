@@ -6,11 +6,8 @@ use App\Application\DTO\Usuario\UsuarioDTO;
 
 class CriarUsuarioRequest
 {
-    private UsuarioDTO $dadosUsuario;
-
-    public function __construct(UsuarioDTO $dadosUsuario)
+    public function __construct(private UsuarioDTO $dadosUsuario)
     {
-        $this->dadosUsuario = $dadosUsuario;
     }
 
     public function getDadosUsuario(): UsuarioDTO

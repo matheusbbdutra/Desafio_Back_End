@@ -9,7 +9,6 @@ class AtualizarUsuarioHandler extends AbstractHandler
 {
     public function __construct(private UsuarioService $usuarioService)
     {
-        $this->usuarioService = $usuarioService;
     }
 
     public function handle($request): ?string

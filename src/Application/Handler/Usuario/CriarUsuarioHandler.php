@@ -8,13 +8,8 @@ use App\Domain\Usuario\Services\UsuarioService;
 
 class CriarUsuarioHandler extends AbstractHandler
 {
-    private UsuarioValidator $usuarioValidator;
-    private UsuarioService $usuarioService;
-
-    public function __construct(UsuarioValidator $usuarioValidator, UsuarioService $usuarioService)
+    public function __construct(private UsuarioValidator $usuarioValidator, private UsuarioService $usuarioService)
     {
-        $this->usuarioValidator = $usuarioValidator;
-        $this->usuarioService = $usuarioService;
     }
 
     public function handle($request): ?string
