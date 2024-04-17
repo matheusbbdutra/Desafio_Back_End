@@ -74,4 +74,14 @@ class Transacao
     {
         $this->dtTransacao = $dtTransacao;
     }
+
+    public function getTipoTransacao(): TipoTransacao
+    {
+        return $this->tipoTransacao;
+    }
+
+    public function setTipoTransacao(TipoTransacao $tipoTransacao): void
+    {
+        $this->tipoTransacao = $tipoTransacao;
+    }
 }

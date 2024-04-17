@@ -18,7 +18,7 @@ class DepositoTransacaoHandler extends AbstractHandler
     {
         if ($request instanceof DepositoTransacaoRequest) {
             $this->validator->validateDeposito($request->getDadosTransacao());
-            $transacao = $this->transacaoService->deposito($request->getDadosTransacao());
+            $transacao = $this->transacaoService->depositar($request->getDadosTransacao());
 
             return "Deposito " . $transacao->getStatus()->value;
         } else {

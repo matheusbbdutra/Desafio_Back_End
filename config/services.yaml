@@ -74,9 +74,7 @@ services:
     App\Domain\Transacao\Services\TransacaoService:
         arguments:
             $entityManager: '@Doctrine\ORM\EntityManagerInterface'
-            $transacaoRepository: '@App\Domain\Transacao\Repository\TransacaoRepository'
             $usuarioRepository: '@App\Domain\Usuario\Repository\UsuarioRepository'
-            $carteiraRepository: '@App\Domain\Transacao\Repository\CarteiraRepository'
             $client: '@App\Infrastructure\Service\AutorizacaoClient'
 
     App\Infrastructure\Service\AutorizacaoClient:

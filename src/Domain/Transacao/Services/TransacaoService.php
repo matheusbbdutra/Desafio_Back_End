@@ -17,116 +17,119 @@ class TransacaoService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TransacaoRepository $transacaoRepository,
         private UsuarioRepository $usuarioRepository,
-        private CarteiraRepository $carteiraRepository,
-        private AutorizacaoClient $client
+        private AutorizacaoClient $client,
     ) {
     }
 
-    public function transferencia(TransacaoDTO $transacaoDTO)
+    public function depositar(TransacaoDTO $transacaoDTO): Transacao
     {
         $this->entityManager->beginTransaction();
 
         try {
             /** @var Usuario $remetente */
-            $remetente = $this->usuarioRepository->findOneBy(['cpfCnpj' => $transacaoDTO->cpfCnpjRemetente]);
-
-            if ($remetente->isLogista()) {
-                throw new \Exception("Logista não pode efetuar transferências.");
-            }
-
-            $destinatario = $this->usuarioRepository->findOneBy(['cpfCnpj' => $transacaoDTO->cpfCnpjDestinatario]);
-
-            if ($remetente->getCarteira()->getSaldo() < $transacaoDTO->valor) {
-                throw new \Exception("Saldo insuficiente");
-            }
-
-            $remetente->getCarteira()->subtrairSaldo($transacaoDTO->valor);
-            $destinatario->getCarteira()->adicionarSaldo($transacaoDTO->valor);
-
-            $this->entityManager->persist($remetente);
-            $this->entityManager->persist($destinatario);
-
-            $transacao = new Transacao(
-                $remetente,
-                $destinatario,
-                $transacaoDTO->valor,
-                Status::Concluido,
-                TipoTransacao::Transferencia,
-                new \DateTime()
-            );
-            $this->entityManager->persist($transacao);
-
-            if (!$this->client->checkAuthorization()) {
-                throw new \DomainException('Transação não autorizada');
-            }
-
-            $this->entityManager->flush();
-            $this->entityManager->commit();
-        } catch (\Exception $e) {
-            $this->entityManager->rollback();
-
-            $transacao = new Transacao(
-                $remetente ?? null,
-                $destinatario ?? null,
-                $transacaoDTO->valor,
-                Status::Falhou,
-                TipoTransacao::Transferencia,
-                new \DateTime()
-            );
-            $this->entityManager->persist($transacao);
-            $this->entityManager->flush();
-
-            throw new \RuntimeException("Erro ao realizar a transferência: " . $e->getMessage(), 0, $e);
-        }
-
-        return $transacao;
-    }
-
-    public function deposito(TransacaoDTO $transacaoDTO)
-    {
-        $this->entityManager->beginTransaction();
-
-        try {
-            /** @var Usuario $remetente */
-            $remetente = $this->usuarioRepository->findOneBy(['cpfCnpj' => $transacaoDTO->cpfCnpjRemetente]);
+            $remetente = $this->getUsuario($transacaoDTO->cpfCnpjRemetente);
             $remetente->getCarteira()->adicionarSaldo($transacaoDTO->valor);
 
             $this->entityManager->persist($remetente);
 
-            $transacao = new Transacao(
+            $transacao = $this->criarTransacao(
                 $remetente,
                 null,
                 $transacaoDTO->valor,
                 Status::Concluido,
-                TipoTransacao::Deposito,
-                new \DateTime()
+                TipoTransacao::Deposito
             );
-            $this->entityManager->persist($transacao);
 
             if (!$this->client->checkAuthorization()) {
                 throw new \DomainException('Transação não autorizada');
             }
 
-            $this->entityManager->flush();
             $this->entityManager->commit();
+            return $transacao;
         } catch (\Exception $e) {
             $this->entityManager->rollback();
 
-            $transacao = new Transacao(
-                $remetente ?? null,
-                null,
-                $transacaoDTO->valor,
-                Status::Falhou,
-                TipoTransacao::Deposito,
-                new \DateTime()
-            );
-            $this->entityManager->persist($transacao);
-            $this->entityManager->flush();
-
+            $this->criarTransacao($remetente, null, $transacaoDTO->valor, Status::Falhou, TipoTransacao::Deposito);
             throw new \RuntimeException("Erro ao realizar o deposito: " . $e->getMessage(), 0, $e);
         }
+    }
+
+    public function transferencia(TransacaoDTO $transacaoDTO): Transacao
+    {
+        $this->entityManager->beginTransaction();
+
+        try {
+            $remetente = $this->getUsuario($transacaoDTO->cpfCnpjRemetente);
+            $destinatario = $this->getUsuario($transacaoDTO->cpfCnpjDestinatario);
+
+            $this->validarTransferencia($remetente, $transacaoDTO->valor);
+
+            $this->executarTransferencia($remetente, $destinatario, $transacaoDTO->valor);
+            $this->entityManager->commit();
+
+            return $this->criarTransacao(
+                $remetente,
+                $destinatario,
+                $transacaoDTO->valor,
+                Status::Concluido,
+                TipoTransacao::Transferencia
+            );
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+
+            $this->criarTransacao($remetente, $destinatario, $transacaoDTO->valor, Status::Falhou, TipoTransacao::Transferencia);
+            throw new \RuntimeException("Erro ao realizar a transferência: " . $e->getMessage(), 0, $e);
+        }
+
+
+    }
+
+    private function getUsuario(string $cpfCnpj): Usuario
+    {
+        /** @var Usuario $usuario */
+        $usuario = $this->usuarioRepository->findOneBy(['cpfCnpj' => $cpfCnpj]);
+
+        return $usuario;
+    }
+
+    private function validarTransferencia(Usuario $remetente, float $valor): void
+    {
+        if ($remetente->isLogista()) {
+            throw new \Exception("Logista não pode efetuar transferências.");
+        }
+
+        if ($remetente->getCarteira()->getSaldo() < $valor) {
+            throw new \Exception("Saldo insuficiente");
+        }
+
+        if (!$this->client->checkAuthorization()) {
+            throw new \DomainException('Transação não autorizada');
+        }
+    }
+
+    private function executarTransferencia(Usuario $remetente, Usuario $destinatario, float $valor): void
+    {
+        $remetente->getCarteira()->subtrairSaldo($valor);
+        $destinatario->getCarteira()->adicionarSaldo($valor);
+
+        $this->entityManager->persist($remetente);
+        $this->entityManager->persist($destinatario);
+
+        $this->entityManager->flush();
+    }
+
+    private function criarTransacao(
+        Usuario $remetente,
+        Usuario $destinatario,
+        float $valor, Status
+        $status,
+        TipoTransacao $tipo
+    ): Transacao {
+        $transacao = new Transacao($remetente, $destinatario, $valor, $status, $tipo, new \DateTime());
+
+        $this->entityManager->persist($transacao);
+        $this->entityManager->flush();
 
         return $transacao;
     }
