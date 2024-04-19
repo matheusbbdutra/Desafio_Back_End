@@ -2,7 +2,7 @@
 
 namespace App\Domain\Transacao\Services;
 
-use App\Application\DTO\Trasacao\TransacaoDTO;
+use App\Application\DTO\Transacao\TransacaoDTO;
 use App\Domain\Transacao\Entity\Transacao;
 use App\Domain\Transacao\Enums\Status;
 use App\Domain\Transacao\Enums\TipoTransacao;
@@ -10,15 +10,19 @@ use App\Domain\Transacao\Repository\CarteiraRepository;
 use App\Domain\Transacao\Repository\TransacaoRepository;
 use App\Domain\Usuario\Entity\Usuario;
 use App\Domain\Usuario\Repository\UsuarioRepository;
-use App\Infrastructure\Service\AutorizacaoClient;
+use App\Infrastructure\Service\ClientService;
+use App\Infrastructure\Service\EmailConsumer;
+use App\Infrastructure\Service\MessageBroker;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TransacaoService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UsuarioRepository $usuarioRepository,
-        private AutorizacaoClient $client,
+        private UsuarioRepository      $usuarioRepository,
+        private ClientService          $client,
+        private EmailConsumer          $emailConsumer,
+        private MessageBroker          $messageBroker
     ) {
     }
 
@@ -41,7 +45,7 @@ class TransacaoService
                 TipoTransacao::Deposito
             );
 
-            if (!$this->client->checkAuthorization()) {
+            if (!$this->client->checkAuthorizationTransaction()) {
                 throw new \DomainException('Transação não autorizada');
             }
 
@@ -103,7 +107,7 @@ class TransacaoService
             throw new \Exception("Saldo insuficiente");
         }
 
-        if (!$this->client->checkAuthorization()) {
+        if (!$this->client->checkAuthorizationTransaction()) {
             throw new \DomainException('Transação não autorizada');
         }
     }
@@ -130,7 +134,28 @@ class TransacaoService
 
         $this->entityManager->persist($transacao);
         $this->entityManager->flush();
+        $this->notificarStatusEmail($transacao, $status);
 
         return $transacao;
+    }
+
+    public function notificarStatusEmail(Transacao $transacao, Status $status)
+    {
+        if ($this->client->shouldSendMensage()) {
+            $mensagem = $this->montarMensagemStatusTransacao($transacao, $status);
+            $recipient = $transacao->getDestinatario()->getEmail();
+            $this->messageBroker->sendMessage('email_queue', $mensagem, $recipient);
+        }
+    }
+
+    private function montarMensagemStatusTransacao(Transacao $transacao, Status $status): string
+    {
+        if ($status == Status::Concluido) {
+            return "A transação {$transacao->getId()} foi concluída com sucesso.";
+        } else if ($status == Status::Falhou) {
+            return "A transação {$transacao->getId()} falhou.";
+        } else {
+            return "A transação {$transacao->getId()} está com o status: {$status->getValue()}.";
+        }
     }
 }

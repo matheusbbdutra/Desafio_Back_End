@@ -151,3 +151,75 @@ Content-Type: application/json
 
 Por favor, substitua "string", "float", "boolean" e "{id}" pelos valores reais que você deseja enviar na solicitação.
 
+
+## Testes
+
+Os testes são uma parte importante do projeto, garantindo que a lógica de negócios esteja funcionando corretamente e ajudando a prevenir regressões quando as mudanças são feitas. Os testes estão localizados no diretório `src/Tests`.
+
+### Estrutura dos Testes
+
+Os testes seguem a mesma estrutura do código do projeto. Por exemplo, os testes para as classes no diretório `Domain/Transacao` estão localizados em `src/Tests/Domain/Transacao`.
+
+### Testes de Domínio
+
+Os testes de domínio focam na lógica de negócios contida nas entidades, serviços e outros componentes do domínio. Por exemplo, se temos uma entidade `Usuario` com um método `alterarSenha`, temos um teste para garantir que a senha do usuário é alterada corretamente quando esse método é chamado.
+
+### Testes de Infraestrutura
+
+Os testes de infraestrutura focam nos componentes que fornecem serviços de infraestrutura, como a comunicação com o banco de dados ou uma fila de mensagens. Por exemplo, temos testes para o `EmailConsumer` e o `MessageBroker` para garantir que eles estão consumindo e enviando mensagens corretamente.
+
+### Executando os Testes
+
+Para executar os testes, você pode usar o seguinte comando:
+
+```bash
+./vendor/bin/phpunit
+```
+
+## Mensageria e Fluxo de Consumo
+
+O projeto utiliza um sistema de mensageria para lidar com a comunicação entre diferentes partes do sistema. Isso é feito através do `MessageBroker` e do `EmailConsumer`.
+
+### MessageBroker
+
+O `MessageBroker` é responsável por enviar mensagens para uma fila de mensagens. Ele utiliza a biblioteca Bunny para se conectar ao RabbitMQ, um servidor de mensagens de código aberto. O `MessageBroker` tem um método `sendMessage` que recebe o nome da fila, a mensagem e o destinatário como parâmetros. Ele então publica a mensagem na fila especificada.
+
+### EmailConsumer
+
+O `EmailConsumer` é responsável por consumir mensagens da fila de mensagens. Ele também utiliza a biblioteca Bunny para se conectar ao RabbitMQ. O `EmailConsumer` tem um método `consume` que recebe um booleano como parâmetro. Se o parâmetro for `true`, o `EmailConsumer` continuará consumindo mensagens da fila até que não haja mais mensagens. Se o parâmetro for `false`, o `EmailConsumer` consumirá apenas uma mensagem da fila.
+
+Quando uma mensagem é consumida, o `EmailConsumer` cria um novo e-mail com o destinatário e a mensagem da mensagem consumida. Ele então envia o e-mail usando o `MailerInterface` do Symfony.
+
+### Fluxo de Consumo
+
+O fluxo de consumo começa quando uma mensagem é enviada para a fila de mensagens pelo `MessageBroker`. A mensagem então fica na fila até que seja consumida pelo `EmailConsumer`.
+
+Quando o `EmailConsumer` consome uma mensagem, ele cria um novo e-mail com o destinatário e a mensagem da mensagem consumida. Ele então envia o e-mail e reconhece a mensagem para removê-la da fila.
+
+Este fluxo permite que o sistema lide com grandes volumes de mensagens de forma eficiente, pois as mensagens podem ser consumidas e processadas em segundo plano.
+
+## Validação do MailHog
+
+O projeto utiliza o MailHog para testar o envio de e-mails. O MailHog é um servidor de e-mail SMTP para desenvolvimento que captura todos os e-mails enviados e os exibe em uma interface web.
+
+No serviço `ClientService`, temos o método `checkEmailInMailHog` que é responsável por verificar se um e-mail específico foi enviado. Ele faz uma solicitação GET para a API do MailHog e verifica se o e-mail com o destinatário e a mensagem especificados está na lista de e-mails capturados pelo MailHog.
+
+Isso permite que possamos testar o envio de e-mails sem realmente enviar e-mails para endereços de e-mail reais, o que é útil durante o desenvolvimento e os testes.
+
+Para verificar se um e-mail foi enviado, você pode usar o seguinte comando:
+
+```bash
+./vendor/bin/phpunit --filter testConsume
+```
+
+## Cron e run_consumer.sh
+
+Este projeto utiliza um cron para executar o script `run_consumer.sh` a cada 15 minutos. O script `run_consumer.sh` é responsável por iniciar o consumer da aplicação.
+
+O cron é configurado no Dockerfile do projeto e é iniciado quando o container Docker é iniciado. O script `run_consumer.sh` está localizado na raiz do projeto e é copiado para o container Docker durante a construção.
+
+### Testando o Cron e o run_consumer.sh
+
+Para testar se o cron está funcionando corretamente, você pode iniciar o container Docker e então acessá-lo com o comando `docker exec -it <container_id> bash`. Uma vez dentro do container, você pode verificar se o cron está rodando com o comando `ps aux | grep cron` e se a tarefa cron foi adicionada corretamente com o comando `crontab -l`.
+
+Para testar se o script `run_consumer.sh` está funcionando como esperado, você pode executá-lo diretamente com o comando `/var/www/run_consumer.sh` dentro do container Docker.

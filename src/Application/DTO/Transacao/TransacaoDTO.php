@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\DTO\Trasacao;
+namespace App\Application\DTO\Transacao;
 
 class TransacaoDTO
 {

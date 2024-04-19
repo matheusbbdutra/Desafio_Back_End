@@ -31,11 +31,15 @@ services:
     container_name: 'rabbitmq'
     ports:
       - "15672:15672"
+      - "5672:5672"
     networks:
       - app-network
     volumes:
       - "./rabbitmq/logs:/var/log/rabbitmq:rw"
-    # Nginx service
+    environment:
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: '!ChangeMe!'
+  # Nginx service
   nginx:
     image: nginx:alpine
     container_name: php-nginx
@@ -48,7 +52,12 @@ services:
       - app-network
     links:
       - app
-
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+    networks:
+      - app-network
 networks:
   app-network:
     driver: bridge

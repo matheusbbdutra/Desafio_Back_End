@@ -18,6 +18,7 @@ services:
         exclude:
             - '../src/Infrastructure/'
             - '../src/Kernel.php'
+            - '../src/Command/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -75,10 +76,21 @@ services:
         arguments:
             $entityManager: '@Doctrine\ORM\EntityManagerInterface'
             $usuarioRepository: '@App\Domain\Usuario\Repository\UsuarioRepository'
-            $client: '@App\Infrastructure\Service\AutorizacaoClient'
+            $client: '@App\Infrastructure\Service\ClientService'
+            $messageBroker: '@App\Infrastructure\Service\MessageBroker'
+            $emailConsumer: '@App\Infrastructure\Service\EmailConsumer'
 
-    App\Infrastructure\Service\AutorizacaoClient:
+    App\Infrastructure\Service\ClientService:
         arguments:
             $client: '@http_client'
 
+    App\Infrastructure\Service\MessageBroker: ~
+    App\Infrastructure\Service\EmailConsumer:
+        arguments:
+            $mailer: '@mailer'
+            $messageBroker: '@App\Infrastructure\Service\MessageBroker'
+
+    App\Command\ConsumeMensageCommand:
+        tags:
+            - { name: 'console.command' }
 
