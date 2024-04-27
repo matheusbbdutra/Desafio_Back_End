@@ -139,7 +139,7 @@ class TransacaoService
         return $transacao;
     }
 
-    public function notificarStatusEmail(Transacao $transacao, Status $status)
+    public function notificarStatusEmail(Transacao $transacao, Status $status): void
     {
         if ($this->client->shouldSendMensage()) {
             $mensagem = $this->montarMensagemStatusTransacao($transacao, $status);

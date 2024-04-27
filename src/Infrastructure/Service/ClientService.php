@@ -24,7 +24,7 @@ class ClientService
 
         $data = $response->toArray();
 
-        return $data['message'] === 'Autorizado' ? true : false;
+        return $data['message'] === 'Autorizado';
     }
 
     public function shouldSendMensage(): bool
@@ -37,8 +37,7 @@ class ClientService
 
     public function checkEmailInMailHog(string $recipient, string $message): bool
     {
-        $client = new Client();
-        $response = $client->request('GET', 'http://localhost:8025/api/v2/messages');
+        $response = $this->client->request('GET', 'http://localhost:8025/api/v2/messages');
         $emails = json_decode($response->getBody(), true);
 
         foreach ($emails['items'] as $email) {

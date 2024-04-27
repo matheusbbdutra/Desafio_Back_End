@@ -2,14 +2,15 @@
 
 namespace App\Domain\Transacao\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use App\Domain\Transacao\Entity\Transacao;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
-class TransacaoRepository extends EntityRepository
+use Doctrine\Persistence\ManagerRegistry;
+
+class TransacaoRepository extends ServiceEntityRepository
 {
-    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($em, $class);
+        parent::__construct($registry, Transacao::class);
     }
 }
