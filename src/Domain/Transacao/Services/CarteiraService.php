@@ -12,7 +12,7 @@ class CarteiraService
     {
     }
 
-    public function criarCarteira(Usuario $usuario)
+    public function criarCarteira(Usuario $usuario): void
     {
         $carteira = new Carteira();
         $carteira->setUsuario($usuario);
