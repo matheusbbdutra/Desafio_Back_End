@@ -6,14 +6,20 @@ use App\Domain\Transacao\Entity\Carteira;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Carteira>
+ */
 class CarteiraRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry,)
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Carteira::class);
     }
 
-    public function criarCarteira(Carteira $carteira)
+    public function criarCarteira(Carteira $carteira): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->beginTransaction();
@@ -24,7 +30,7 @@ class CarteiraRepository extends ServiceEntityRepository
         } catch (\Exception $e) {
             $entityManager->rollback();
 
-            throw new \RuntimeException("Erro ao criar carteiro do usuário: " . $e->getMessage(), 0, $e);
+            throw new \RuntimeException('Erro ao criar carteiro do usuário: '.$e->getMessage(), 0, $e);
         }
     }
 }

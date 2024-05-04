@@ -16,6 +16,7 @@ services:
     App\:
         resource: '../src/'
         exclude:
+            - '../src/Tests/bootstrap.php'
             - '../src/Kernel.php'
             - '../src/Command/'
 

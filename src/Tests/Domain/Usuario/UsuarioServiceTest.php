@@ -1,20 +1,21 @@
 <?php
 
-use App\Domain\Usuario\Services\UsuarioService;
+namespace App\Tests\Domain\Usuario;
+
 use App\Application\DTO\Usuario\UsuarioDTO;
+use App\Domain\Transacao\Services\CarteiraService;
 use App\Domain\Usuario\Entity\Usuario;
 use App\Domain\Usuario\Repository\UsuarioRepository;
-use App\Domain\Transacao\Services\CarteiraService;
+use App\Domain\Usuario\Services\UsuarioService;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Domain\Usuario\ValueObject\Documento;
-use App\Domain\Usuario\ValueObject\Email;
 
-class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
+class UsuarioServiceTest extends TestCase
 {
-    private $encoder;
-    private $usuarioRepository;
-    private $carteiraService;
-    private $usuarioService;
+    private UserPasswordHasherInterface $encoder;
+    private UsuarioRepository $usuarioRepository;
+    private CarteiraService $carteiraService;
+    private UsuarioService $usuarioService;
 
     protected function setUp(): void
     {
@@ -25,7 +26,7 @@ class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
         $this->usuarioService = new UsuarioService(
             $this->encoder,
             $this->usuarioRepository,
-            $this->carteiraService
+            $this->carteiraService,
         );
     }
 
@@ -34,7 +35,7 @@ class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
         parent::tearDown();
     }
 
-    public function testCriarUsuario()
+    public function testCriarUsuario(): void
     {
         $usuarioDTO = new UsuarioDTO();
         $usuarioDTO->nome = 'John Doe';
@@ -47,7 +48,7 @@ class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
             ->method('hashPassword')
             ->with(
                 $this->isInstanceOf(Usuario::class),
-                $this->equalTo($usuarioDTO->senha) 
+                $this->equalTo($usuarioDTO->senha),
             )
             ->willReturn('senha_criptografada');
 
@@ -61,7 +62,7 @@ class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('senha_criptografada', $result->getSenha());
     }
 
-    public function testAtualizarUsuario()
+    public function testAtualizarUsuario(): void
     {
         $usuarioDTO = new UsuarioDTO();
         $usuarioDTO->id = 1;
@@ -75,12 +76,12 @@ class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
             ->method('hashPassword')
             ->with(
                 $this->isInstanceOf(Usuario::class),
-                $this->equalTo($usuarioDTO->senha) 
+                $this->equalTo($usuarioDTO->senha),
             )
             ->willReturn('senha_criptografada');
 
         $result = $this->usuarioService->criarUsuario($usuarioDTO);
-        
+
         $this->assertInstanceOf(Usuario::class, $result);
         $this->assertEquals($usuarioDTO->nome, $result->getNome());
         $this->assertEquals($usuarioDTO->email, $result->getEmail()->getEmail());

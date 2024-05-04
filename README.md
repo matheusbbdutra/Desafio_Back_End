@@ -80,6 +80,20 @@ Os testes são executados automaticamente como parte do pipeline de CI/CD config
 
 Lembre-se de escrever novos testes ou atualizar os existentes ao modificar a aplicação ou adicionar novas funcionalidades, mantendo a suíte de testes relevante e útil.
 
+## PHP-CS-Fixer
+O PHP-CS-Fixer é uma ferramenta que corrige automaticamente problemas de estilo de código. Para executar o PHP-CS-Fixer e corrigir problemas de estilo de código automaticamente, use o seguinte comando:
+
+```bash
+    ./vendor/bin/php-cs-fixer fix
+```
+
+## PHPStan
+PHPStan é uma ferramenta de análise estática de código para PHP. Ela ajuda a detectar erros no código sem precisar executá-lo. Para executar a análise estática com PHPStan, use o seguinte comando:
+
+```bash
+    ./vendor/bin/phpstan analyse
+```
+
 # Arquitetura e Padrões de Design
 
 Este projeto segue uma abordagem de Domain-Driven Design (DDD) para focar na complexidade do domínio central e promover uma modelagem rica e expressiva do domínio de negócios. A estrutura do código é organizada em torno do domínio do negócio, facilitando a comunicação e a manutenibilidade do sistema. Abaixo, detalhamos como os padrões de design e arquitetura são implementados no projeto:

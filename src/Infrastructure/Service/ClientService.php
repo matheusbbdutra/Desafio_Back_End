@@ -18,13 +18,13 @@ class ClientService
             ],
         ]);
 
-        if ($response->getStatusCode() !== 200) {
+        if (200 !== $response->getStatusCode()) {
             return false;
         }
 
         $data = $response->toArray();
 
-        return $data['message'] === 'Autorizado';
+        return 'Autorizado' === $data['message'];
     }
 
     public function shouldSendMensage(): bool

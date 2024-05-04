@@ -1,5 +1,5 @@
 controllers:
     resource:
-        path: ../src/Presentation/Controller/API/
-        namespace: App\Presentation\Controller\API
+        path: ../src/Presentation/Actions
+        namespace: App\Presentation\Actions
     type: attribute

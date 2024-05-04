@@ -15,7 +15,7 @@ class UsuarioService
     public function __construct(
         private UserPasswordHasherInterface $encoder,
         private UsuarioRepository $usuarioRepository,
-        private CarteiraService $carteiraService
+        private CarteiraService $carteiraService,
     ) {
     }
 
