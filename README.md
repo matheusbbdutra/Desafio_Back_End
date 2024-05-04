@@ -82,27 +82,24 @@ Lembre-se de escrever novos testes ou atualizar os existentes ao modificar a apl
 
 # Arquitetura e Padrões de Design
 
-Este projeto é estruturado seguindo a arquitetura de camadas, inspirada nos princípios do Domain-Driven Design (DDD) e nos padrões SOLID, para promover um design de software limpo e modular. Abaixo está uma descrição de como a arquitetura e os padrões de design são aplicados:
+Este projeto segue uma abordagem de Domain-Driven Design (DDD) para focar na complexidade do domínio central e promover uma modelagem rica e expressiva do domínio de negócios. A estrutura do código é organizada em torno do domínio do negócio, facilitando a comunicação e a manutenibilidade do sistema. Abaixo, detalhamos como os padrões de design e arquitetura são implementados no projeto:
 
-- **Camada de Aplicação (`Application`)**: Esta camada atua como um ponto de entrada para a lógica de negócios, orquestrando o fluxo de dados entre a interface do usuário e a camada de domínio. Ela contém serviços de aplicação que coordenam a execução de operações específicas do domínio, transferindo dados entre as camadas através de Data Transfer Objects (DTOs).
+## Domain-Driven Design (DDD)
 
-- **Camada de Domínio (`Domain`)**: O coração do projeto, esta camada encapsula a lógica e as regras de negócios essenciais. Ela é composta por entidades, objetos de valor, interfaces de repositório e serviços de domínio. Esta camada é independente de qualquer tecnologia específica de infraestrutura, garantindo que a lógica de negócios possa ser testada e evoluída de forma isolada.
+- **Entidades e Objetos de Valor**: Modelamos o domínio de negócios usando entidades e objetos de valor, capturando conceitos do domínio e suas relações.
+- **Agregados**: Utilizamos agregados para agrupar entidades e objetos de valor que mudam juntos, garantindo a consistência das regras de negócio.
 
-- **Camada de Infraestrutura (`Infrastructure`)**: Fornece implementações concretas para as interfaces definidas na camada de domínio, como repositórios e serviços de domínio. Esta camada lida com detalhes técnicos como comunicação com o banco de dados, integração com APIs externas e configuração de frameworks.
+## Data Transfer Objects (DTOs)
 
-- **Camada de Apresentação (`Presentation`)**: Responsável pela interação com o usuário, esta camada contém controladores, views e outros componentes de interface do usuário. Ela traduz as requisições do usuário em ações nos serviços de aplicação e transforma os resultados em respostas compreensíveis pelo usuário.
+- **DTOs** são utilizados para transferir dados entre a camada de apresentação e a camada de serviço, encapsulando os dados de forma eficiente e reduzindo a acoplamento entre as camadas.
 
-## Padrões de Design Implementados
+## Service Layer
 
-- **Service Layer**: O projeto utiliza uma camada de serviço, dividida entre Serviços de Aplicação e Serviços de Domínio, para separar a lógica de negócios da lógica de apresentação e infraestrutura. Isso ajuda a manter o código organizado, facilita a reutilização e a manutenção.
+- **Serviços de Domínio**: Separamos a lógica de negócios complexa em serviços de domínio, focados nas regras de negócio, que coordenam a execução de operações de negócio, interagindo com infraestrutura, serviços externos e o domínio.
 
-- **Facade**: Implementamos o padrão Facade para fornecer uma interface simplificada para complexas interações entre objetos na camada de aplicação. Isso ajuda a reduzir a complexidade do código e melhora a legibilidade.
+## Repository Pattern
 
-- **Repository**: Para abstrair a lógica de acesso a dados, utilizamos o padrão Repository, permitindo que a camada de domínio permaneça agnóstica em relação à fonte de dados.
-
-- **DTO (Data Transfer Object)**: Utilizamos DTOs para transferir dados entre as camadas de aplicação e apresentação, encapsulando os dados em objetos simples, sem lógica de negócios, para otimizar a comunicação.
-
-Esta estrutura e estes padrões de design ajudam a garantir que o projeto seja escalável, testável e fácil de manter, alinhando-se com as melhores práticas de desenvolvimento de software.
+- **Repositórios**: Abstraímos o acesso a dados usando o padrão Repository, permitindo que a camada de domínio interaja com a base de dados de forma indireta. Isso facilita a substituição da fonte de dados e melhora a testabilidade do código.
 
 ## Padrão das Resquisições 
 Modelos de requisição com os métodos HTTP correspondentes para cada ação do controlador:
