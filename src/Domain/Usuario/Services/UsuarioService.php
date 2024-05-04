@@ -34,7 +34,7 @@ class UsuarioService
         return $usuario;
     }
 
-    public function atualizarUsuario(UsuarioDTO $usuarioDTO): void
+    public function atualizarUsuario(UsuarioDTO $usuarioDTO): Usuario
     {
         /** @var Usuario $usuario */
         $usuario = $this->usuarioRepository->find($usuarioDTO->id);
@@ -46,5 +46,7 @@ class UsuarioService
         $usuario->setIsLogista($usuarioDTO->isLogista ?: false);
 
         $this->usuarioRepository->atualizarUsuario($usuario);
+
+        return $usuario;
     }
 }

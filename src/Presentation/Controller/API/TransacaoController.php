@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Presentation\Controller\API;
 
 use App\Application\DTO\Transacao\TransacaoDTO;
-use App\Application\Facede\TransacaoFacede;
 use App\Application\Validators\Validator;
+use App\Domain\Transacao\Services\TransacaoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,9 +15,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 class TransacaoController extends AbstractController
 {
     public function __construct(
-        private  TransacaoFacede    $facede,
-        private SerializerInterface $serializer,
-        private Validator           $validator
+        private readonly TransacaoService $service,
+        private readonly SerializerInterface $serializer,
+        private readonly Validator $validator
     ) {
     }
 
@@ -30,9 +28,14 @@ class TransacaoController extends AbstractController
             $transacaoDTO = $this->serializer->deserialize($request->getContent(), TransacaoDTO::class, 'json');
             $this->validator->validate($transacaoDTO);
 
-            $resultado = $this->facede->transferencia($transacaoDTO);
+            $resultado = $this->service->transferencia($transacaoDTO);
 
-            return new JsonResponse(['message' => $resultado], Response::HTTP_OK);
+            return new JsonResponse([
+                'message' => "A transferência de R$ {$resultado->getValor()} para " .
+                "{$resultado->getDestinatario()->getNome()} foi realizada com sucesso!"
+                ], 
+                Response::HTTP_OK
+            );
         } catch (\Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
@@ -45,9 +48,14 @@ class TransacaoController extends AbstractController
             $transacaoDTO = $this->serializer->deserialize($request->getContent(), TransacaoDTO::class, 'json');
             $this->validator->validate($transacaoDTO, ['deposito']);
 
-            $resultado = $this->facede->depositar($transacaoDTO);
+            $resultado = $this->service->depositar($transacaoDTO);
 
-            return new JsonResponse(['message' => $resultado], Response::HTTP_OK);
+            return new JsonResponse([
+                'message' => "{$resultado->getRemetente()->getNome()}, o depósito de R$" .
+                "{$resultado->getValor()} foi realizado com sucesso!"
+                ], 
+                Response::HTTP_OK
+            );
         } catch (\Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }

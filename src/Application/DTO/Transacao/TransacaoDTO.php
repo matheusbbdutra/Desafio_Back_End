@@ -10,6 +10,6 @@ class TransacaoDTO
     public $cpfCnpjRemetente;
     #[Assert\NotNull(message: "O campo valor é obrigatório")]
     public $valor;
-    #[Assert\NotNull(message: "O campo cpfCnpjDestinatario é obrigatório", groups: ["deposito"])]
+    #[Assert\NotNull(message: "O campo cpfCnpjDestinatario é obrigatório")]
     public $cpfCnpjDestinatario;
 }

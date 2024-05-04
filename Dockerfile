@@ -20,7 +20,7 @@ COPY run_consumer.sh /var/www/run_consumer.sh
 
 RUN chmod +x  /var/www/run_consumer.sh
 
-RUN (crontab -l ; echo "*/15 * * * * /run_consumer.sh") | crontab
+RUN (crontab -l ; echo "*/10 * * * * /run_consumer.sh") | crontab
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
