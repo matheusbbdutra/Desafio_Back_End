@@ -6,10 +6,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class TransacaoDTO
 {
-    #[Assert\NotNull(message: "O campo cpfCnpjRemetente é obrigatório")]
-    public $cpfCnpjRemetente;
-    #[Assert\NotNull(message: "O campo valor é obrigatório")]
-    public $valor;
-    #[Assert\NotNull(message: "O campo cpfCnpjDestinatario é obrigatório")]
-    public $cpfCnpjDestinatario;
+    #[Assert\NotNull(message: 'O campo cpfCnpjRemetente é obrigatório')]
+    public string $cpfCnpjRemetente;
+    #[Assert\NotNull(message: 'O campo valor é obrigatório')]
+    public float $valor;
+    #[Assert\NotNull(message: 'O campo cpfCnpjDestinatario é obrigatório')]
+    public ?string $cpfCnpjDestinatario;
 }

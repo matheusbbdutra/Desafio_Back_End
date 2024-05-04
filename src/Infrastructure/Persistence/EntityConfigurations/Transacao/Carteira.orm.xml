@@ -9,7 +9,7 @@
             <generator strategy="IDENTITY"/>
         </id>
         <field name="saldo" column="s_saldo" type="float" nullable="true"/>
-        <one-to-one field="usuario" target-entity="App\Domain\Usuario\Entity\Usuario" inversed-by="carteira">
+        <one-to-one field="usuario" target-entity="App\Domain\Usuario\Entity\Usuario" inversed-by="carteira" nullable="false">
             <join-column name="usuario_id" referenced-column-name="id"/>
         </one-to-one>
 

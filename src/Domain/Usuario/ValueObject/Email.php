@@ -6,7 +6,7 @@ class Email
 {
     public function __construct(private string $email)
     {
-        if (!$this->isValid($email)) {
+        if (! $this->isValid($email)) {
             throw new \InvalidArgumentException('Email informado é inválido.');
         }
 
@@ -15,7 +15,7 @@ class Email
 
     public function isValid(string $email): bool
     {
-        return filter_var($email, FILTER_VALIDATE_EMAIL);
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     public function getEmail(): string

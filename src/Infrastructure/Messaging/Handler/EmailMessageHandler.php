@@ -10,12 +10,11 @@ use Symfony\Component\Mime\Email;
 #[AsMessageHandler]
 class EmailMessageHandler
 {
-
     public function __construct(private MailerInterface $mailer)
     {
     }
 
-    public function __invoke(EmailMessage $message)
+    public function __invoke(EmailMessage $message): void
     {
         $email = (new Email())
             ->from('matheus@matheusdutra.me')
@@ -23,6 +22,6 @@ class EmailMessageHandler
             ->subject($message->getSubject())
             ->text($message->getBody());
 
-    $this->mailer->send($email);
+        $this->mailer->send($email);
     }
 }

@@ -10,7 +10,7 @@
         </id>
         <field name="valor" column="valor" type="float"/>
         <field name="dtTransacao" column="dt_transacao" type="datetime"/>
-        <many-to-one field="remetente" target-entity="App\Domain\Usuario\Entity\Usuario" inversed-by="transacoesEnviadas">
+        <many-to-one field="remetente" target-entity="App\Domain\Usuario\Entity\Usuario" inversed-by="transacoesEnviadas" nullable="false">
             <join-column name="remetente_id" referenced-column-name="id"/>
         </many-to-one>
 

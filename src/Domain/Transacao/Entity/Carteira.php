@@ -7,7 +7,7 @@ use App\Domain\Usuario\Entity\Usuario;
 class Carteira
 {
     private int $id;
-    private Usuario $usuario;
+    private ?Usuario $usuario;
     private ?float $saldo;
 
     public function getId(): int
@@ -20,12 +20,12 @@ class Carteira
         $this->id = $id;
     }
 
-    public function getUsuario(): Usuario
+    public function getUsuario(): ?Usuario
     {
         return $this->usuario;
     }
 
-    public function setUsuario(Usuario $usuario): void
+    public function setUsuario(?Usuario $usuario): void
     {
         $this->usuario = $usuario;
     }
@@ -43,7 +43,7 @@ class Carteira
     public function adicionarSaldo(float $quantia): void
     {
         if ($quantia < 0) {
-            throw new \InvalidArgumentException("Quantia não pode ser negativa.");
+            throw new \InvalidArgumentException('Quantia não pode ser negativa.');
         }
         $this->saldo += $quantia;
     }
@@ -51,10 +51,10 @@ class Carteira
     public function subtrairSaldo(float $quantia): void
     {
         if ($quantia < 0) {
-            throw new \InvalidArgumentException("Quantia não pode ser negativa.");
+            throw new \InvalidArgumentException('Quantia não pode ser negativa.');
         }
         if ($this->saldo < $quantia) {
-            throw new \LogicException("Saldo insuficiente.");
+            throw new \LogicException('Saldo insuficiente.');
         }
         $this->saldo -= $quantia;
     }

@@ -1,25 +1,25 @@
 <?php
 
-use App\Domain\Transacao\Services\TransacaoService;
+namespace App\Tests\Domain\Transacao;
+
 use App\Application\DTO\Transacao\TransacaoDTO;
+use App\Domain\Transacao\Entity\Carteira;
 use App\Domain\Transacao\Entity\Transacao;
-use App\Domain\Transacao\Enums\Status;
-use App\Domain\Transacao\Enums\TipoTransacao;
+use App\Domain\Transacao\Services\TransacaoService;
 use App\Domain\Usuario\Entity\Usuario;
 use App\Domain\Usuario\Repository\UsuarioRepository;
 use App\Infrastructure\Service\ClientService;
 use App\Infrastructure\Service\MessageService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
-use App\Domain\Transacao\Entity\Carteira;
 
 class TransacaoServiceTest extends TestCase
 {
-    private $entityManager;
-    private $usuarioRepository;
-    private $clientService;
-    private $messageService;
-    private $transacaoService;
+    private EntityManagerInterface $entityManager;
+    private UsuarioRepository $usuarioRepository;
+    private ClientService $clientService;
+    private MessageService $messageService;
+    private TransacaoService $transacaoService;
 
     protected function setUp(): void
     {
@@ -32,7 +32,7 @@ class TransacaoServiceTest extends TestCase
             $this->entityManager,
             $this->usuarioRepository,
             $this->clientService,
-            $this->messageService
+            $this->messageService,
         );
     }
 

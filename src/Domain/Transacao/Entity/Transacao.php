@@ -8,7 +8,7 @@ use App\Domain\Usuario\Entity\Usuario;
 
 class Transacao
 {
-    private int $id;
+    private readonly int $id;
 
     public function __construct(
         private Usuario $remetente,
@@ -16,7 +16,7 @@ class Transacao
         private float $valor,
         private Status $status,
         private TipoTransacao $tipoTransacao,
-        private \DateTime $dtTransacao
+        private \DateTime $dtTransacao,
     ) {
     }
 
@@ -30,7 +30,7 @@ class Transacao
         return $this->remetente;
     }
 
-    public function setRemetente(?Usuario $remetente): void
+    public function setRemetente(Usuario $remetente): void
     {
         $this->remetente = $remetente;
     }

@@ -2,13 +2,12 @@
 
 namespace App\Domain\Usuario\Entity;
 
-use App\Domain\Entity\Collection;
 use App\Domain\Transacao\Entity\Carteira;
 use App\Domain\Transacao\Entity\Transacao;
 use App\Domain\Usuario\ValueObject\Documento;
 use App\Domain\Usuario\ValueObject\Email;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class Usuario implements PasswordAuthenticatedUserInterface
@@ -18,8 +17,14 @@ class Usuario implements PasswordAuthenticatedUserInterface
     private Documento $cpfCnpj;
     private string $senha;
     private Email $email;
-    private DoctrineCollection $transacoesEnviadas;
-    private DoctrineCollection $transacoesRecebidas;
+    /**
+     * @var Collection<int, Transacao>
+     */
+    private Collection $transacoesEnviadas;
+    /**
+     * @var Collection<int, Transacao>
+     */
+    private Collection $transacoesRecebidas;
     private Carteira $carteira;
     private bool $isLogista = false;
 
@@ -93,14 +98,18 @@ class Usuario implements PasswordAuthenticatedUserInterface
     {
         $this->carteira = $carteira;
     }
-    public function getTransacoesEnviadas(): DoctrineCollection
+
+    /**
+     * @return Collection<int, Transacao>
+     */
+    public function getTransacoesEnviadas(): Collection
     {
         return $this->transacoesEnviadas;
     }
 
     public function addTransacaoEnviada(Transacao $transacao): void
     {
-        if (!$this->transacoesEnviadas->contains($transacao)) {
+        if (! $this->transacoesEnviadas->contains($transacao)) {
             $this->transacoesEnviadas->add($transacao);
             $transacao->setRemetente($this);
         }
@@ -111,19 +120,22 @@ class Usuario implements PasswordAuthenticatedUserInterface
         if ($this->transacoesEnviadas->contains($transacao)) {
             $this->transacoesEnviadas->removeElement($transacao);
             if ($transacao->getRemetente() === $this) {
-                $transacao->setRemetente(null);
+                $transacao->setRemetente($this);
             }
         }
     }
 
-    public function getTransacoesRecebidas(): DoctrineCollection
+    /**
+     * @return Collection<int, Transacao>
+     */
+    public function getTransacoesRecebidas(): Collection
     {
         return $this->transacoesRecebidas;
     }
 
     public function addTransacaoRecebida(Transacao $transacao): void
     {
-        if (!$this->transacoesRecebidas->contains($transacao)) {
+        if (! $this->transacoesRecebidas->contains($transacao)) {
             $this->transacoesRecebidas->add($transacao);
             $transacao->setDestinatario($this);
         }

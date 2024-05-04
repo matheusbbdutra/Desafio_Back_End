@@ -2,9 +2,8 @@
 
 namespace App\Infrastructure\Service;
 
-
-use Symfony\Component\Messenger\MessageBusInterface;
 use App\Infrastructure\Messaging\EmailMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class MessageService
 {
@@ -13,8 +12,12 @@ class MessageService
         $this->messageBus = $messageBus;
     }
 
-    public function sendMessage(string $to, string $subject, string $body)
+    public function sendMessage(?string $to, string $subject, string $body): void
     {
+        if (! $to) {
+            return;
+        }
+
         $message = new EmailMessage($to, $subject, $body);
         $this->messageBus->dispatch($message);
     }
