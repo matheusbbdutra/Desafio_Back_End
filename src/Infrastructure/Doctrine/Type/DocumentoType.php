@@ -9,17 +9,17 @@ use Doctrine\DBAL\Types\Type;
 class DocumentoType extends Type
 {
     private const NAME = 'documento';
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getStringTypeDeclarationSQL($fieldDeclaration);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): Documento
     {
         return new Documento($value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
     {
         if ($value instanceof Documento) {
             return $value->getCpfCnpj();
@@ -27,7 +27,7 @@ class DocumentoType extends Type
         return $value;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

@@ -3,15 +3,14 @@
 namespace App\Domain\Transacao\Repository;
 
 use App\Domain\Transacao\Entity\Carteira;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class CarteiraRepository extends EntityRepository
+class CarteiraRepository extends ServiceEntityRepository
 {
-    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    public function __construct(ManagerRegistry $registry,)
     {
-        parent::__construct($em, $class);
+        parent::__construct($registry, Carteira::class);
     }
 
     public function criarCarteira(Carteira $carteira)

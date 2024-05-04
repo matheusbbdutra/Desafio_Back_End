@@ -1,0 +1,1 @@
+{"version":1,"defects":{"UsuarioServiceTest::testCriarUsuario":7,"UsuarioServiceTest::testAtualizarUsuario":8,"TransacaoServiceTest::testDepositar":8},"times":{"UsuarioServiceTest::testCriarUsuario":0.003,"UsuarioServiceTest::testAtualizarUsuario":0,"TransacaoServiceTest::testDepositar":0.025,"TransacaoServiceTest::testTransferencia":0.016}}

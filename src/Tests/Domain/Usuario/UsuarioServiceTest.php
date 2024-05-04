@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Tests\Domain\Usuario;
-
+use App\Domain\Usuario\Services\UsuarioService;
 use App\Application\DTO\Usuario\UsuarioDTO;
-use App\Domain\Transacao\Services\CarteiraService;
 use App\Domain\Usuario\Entity\Usuario;
 use App\Domain\Usuario\Repository\UsuarioRepository;
-use App\Domain\Usuario\Services\UsuarioService;
+use App\Domain\Transacao\Services\CarteiraService;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Domain\Usuario\ValueObject\Documento;
 use App\Domain\Usuario\ValueObject\Email;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UsuarioServiceTest extends TestCase
+class UsuarioServiceTest extends \PHPUnit\Framework\TestCase
 {
-    private UsuarioService $usuarioService;
-    private UserPasswordHasherInterface $encoder;
-    private UsuarioRepository $usuarioRepository;
-    private CarteiraService $carteiraService;
+    private $encoder;
+    private $usuarioRepository;
+    private $carteiraService;
+    private $usuarioService;
 
     protected function setUp(): void
     {
@@ -32,21 +29,63 @@ class UsuarioServiceTest extends TestCase
         );
     }
 
-    public function testCreateUser(): void
+    protected function tearDown(): void
     {
-        $nome = 'Test User';
-        $cpfCnpj = '12345678901';
-        $senha = 'password';
-        $email = 'test@example.com';
-        $isLogista = false;
+        parent::tearDown();
+    }
 
+    public function testCriarUsuario()
+    {
         $usuarioDTO = new UsuarioDTO();
-        $usuarioDTO->nome = $nome;
-        $usuarioDTO->cpfCnpj = $cpfCnpj;
-        $usuarioDTO->senha = $senha;
-        $usuarioDTO->email = $email;
-        $usuarioDTO->isLogista = $isLogista;
+        $usuarioDTO->nome = 'John Doe';
+        $usuarioDTO->email = 'john@example.com';
+        $usuarioDTO->cpfCnpj = '95899784016';
+        $usuarioDTO->senha = 'password';
+        $usuarioDTO->isLogista = true;
 
-        $this->usuarioService->criarUsuario($usuarioDTO);
+        $this->encoder->expects($this->once())
+            ->method('hashPassword')
+            ->with(
+                $this->isInstanceOf(Usuario::class),
+                $this->equalTo($usuarioDTO->senha) 
+            )
+            ->willReturn('senha_criptografada');
+
+        $result = $this->usuarioService->criarUsuario($usuarioDTO);
+
+        $this->assertInstanceOf(Usuario::class, $result);
+        $this->assertEquals($usuarioDTO->nome, $result->getNome());
+        $this->assertEquals($usuarioDTO->email, $result->getEmail()->getEmail());
+        $this->assertEquals($usuarioDTO->cpfCnpj, $result->getCpfCnpj());
+        $this->assertEquals($usuarioDTO->isLogista, $result->isLogista());
+        $this->assertEquals('senha_criptografada', $result->getSenha());
+    }
+
+    public function testAtualizarUsuario()
+    {
+        $usuarioDTO = new UsuarioDTO();
+        $usuarioDTO->id = 1;
+        $usuarioDTO->nome = 'John Doe';
+        $usuarioDTO->email = 'john@example.com';
+        $usuarioDTO->cpfCnpj = '95899784016';
+        $usuarioDTO->senha = 'password';
+        $usuarioDTO->isLogista = true;
+
+        $this->encoder->expects($this->once())
+            ->method('hashPassword')
+            ->with(
+                $this->isInstanceOf(Usuario::class),
+                $this->equalTo($usuarioDTO->senha) 
+            )
+            ->willReturn('senha_criptografada');
+
+        $result = $this->usuarioService->criarUsuario($usuarioDTO);
+        
+        $this->assertInstanceOf(Usuario::class, $result);
+        $this->assertEquals($usuarioDTO->nome, $result->getNome());
+        $this->assertEquals($usuarioDTO->email, $result->getEmail()->getEmail());
+        $this->assertEquals($usuarioDTO->cpfCnpj, $result->getCpfCnpj());
+        $this->assertEquals($usuarioDTO->isLogista, $result->isLogista());
+        $this->assertEquals('senha_criptografada', $result->getSenha());
     }
 }

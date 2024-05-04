@@ -24,22 +24,21 @@ class ClientService
 
         $data = $response->toArray();
 
-        return $data['message'] === 'Autorizado' ? true : false;
+        return $data['message'] === 'Autorizado';
     }
 
     public function shouldSendMensage(): bool
     {
         $response = $this->client->request('GET', 'https://run.mocky.io/v3/54dc2cf1-3add-45b5-b5a9-6bf7e7f1f4a6');
-        $data = json_decode($response->getBody()->getContents(), true);
+        $data = $response->toArray();
 
         return $data['message'] ?? false;
     }
 
     public function checkEmailInMailHog(string $recipient, string $message): bool
     {
-        $client = new Client();
-        $response = $client->request('GET', 'http://localhost:8025/api/v2/messages');
-        $emails = json_decode($response->getBody(), true);
+        $response = $this->client->request('GET', 'http://localhost:8025/api/v2/messages');
+        $emails = $response->toArray();
 
         foreach ($emails['items'] as $email) {
             if ($email['Content']['Headers']['To'][0] === $recipient && $email['Content']['Body'] === $message) {

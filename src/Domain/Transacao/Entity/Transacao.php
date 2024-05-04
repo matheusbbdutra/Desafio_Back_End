@@ -30,17 +30,17 @@ class Transacao
         return $this->remetente;
     }
 
-    public function setRemetente(Usuario $remetente): void
+    public function setRemetente(?Usuario $remetente): void
     {
         $this->remetente = $remetente;
     }
 
-    public function getDestinatario(): Usuario
+    public function getDestinatario(): ?Usuario
     {
         return $this->destinatario;
     }
 
-    public function setDestinatario(Usuario $destinatario): void
+    public function setDestinatario(?Usuario $destinatario): void
     {
         $this->destinatario = $destinatario;
     }

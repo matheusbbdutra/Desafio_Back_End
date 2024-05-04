@@ -10,17 +10,17 @@ class EmailType extends Type
 {
     private const NAME = 'email';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getStringTypeDeclarationSQL($fieldDeclaration);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): Email
     {
         return new Email($value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
     {
         if ($value instanceof Email) {
             return $value->getEmail();
@@ -28,7 +28,7 @@ class EmailType extends Type
         return $value;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

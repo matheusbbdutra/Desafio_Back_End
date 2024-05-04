@@ -3,17 +3,16 @@
 namespace App\Domain\Usuario\Repository;
 
 use App\Domain\Usuario\Entity\Usuario;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 
-class UsuarioRepository extends EntityRepository
+class UsuarioRepository extends ServiceEntityRepository
 {
-    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($em, $class);
+        parent::__construct($registry, Usuario::class);
     }
 
     public function criarUsuario(Usuario $usuario): void
@@ -28,11 +27,7 @@ class UsuarioRepository extends EntityRepository
         } catch (UniqueConstraintViolationException $e) {
             $entityManager->rollback();
 
-            throw new \RuntimeException("Erro: Usuário já existe.", 0, $e);
-        } catch (ForeignKeyConstraintViolationException $e) {
-            $entityManager->rollback();
-
-            throw new \RuntimeException("Erro de integridade de referência.", 0, $e);
+            throw new \RuntimeException("Erro: Já existe um usuário cadastrado para esse CPF.", 0, $e);
         } catch (\Exception $e) {
             $entityManager->rollback();
 
